@@ -6,16 +6,15 @@
     <title>Relatório de Produtos</title>
 </head>
 <body>
-    <h1>Relátorio deProdutos</h1>
+    <h1>Relátorio de Produtos</h1>
     <table border="1">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>NOME</th>
                 <th>QUANTIDADE</th>
-                <th>PRECO</th>
-                <th>Deletar</th>
-                <th>Atualizar</th>
+                <th>PREÇO</th>
+                <th>ATUALIZAR</th>
             <tr>
         </thead>
         <tbody>
@@ -23,8 +22,13 @@
                 <tr>
                     <td>{{$produto->id}}</td>
                     <td>{{$produto->nome}}</td>
-                    <td>Faremos a encomenda</td>
-                    <td>Faremos a encomenda</td>
+                    <td>{{$produto->quantidade}}</td>
+                    <td>{{$produto->preco}}</td>
+                    <td>
+                        <a href="{{route('produto.atualizar', $produto->id)}}">Atualizar</a>
+
+                    </td>
+                    
                 </tr>
 
             @empty

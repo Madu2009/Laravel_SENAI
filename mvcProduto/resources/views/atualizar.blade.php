@@ -24,7 +24,7 @@
     </form>
 
     @if($errors->any())
-        <div style="color:blue">
+        <div style="color:rgb(255, 0, 0)">
             <ul>
                 @foreach ($errors->all() as $erro)
                     <li>{{$erro}}</li>
