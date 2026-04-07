@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Produto;
+use App\Models\DetalhesProduto;
 
 use Illuminate\Http\Request;
 
@@ -9,8 +9,8 @@ class ProdutoController extends Controller
 {
     public function listar(){
         $query = Produto::query();
-        $produtos = $query->get();
-        return view('listar', compact('produtos'));
+        $produto = $query->get();
+        return view('listar', compact('produto'));
     }
 
     public function add(Request $request){
@@ -26,11 +26,17 @@ class ProdutoController extends Controller
             'preco' => $request->preco,
         ]);
 
-        return redirect()->back()->with('success','Produto Cadastrado com sucesso!');
+        Detalhes::create([
+            'descricao' => $request->descricao,
+            'tamanho' => $request->tamanho,
+            'peso' => $request->peso,
+        ]);
+
+        return redirect()->back()->with('success','Detalhes do produto cadastrados com sucesso!');
     }
 
     public function atualizar($id){
-        $produto =Produto::findOrFail($id);
+        $produtos =Produto::findOrFail($id);
         return view('atualizar', compact('produto'));
     }
 
