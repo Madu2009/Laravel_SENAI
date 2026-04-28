@@ -6,13 +6,13 @@ use App\Models\Turma;
 
 use Illuminate\Http\Request;
 
-class AlunoController extends Controller
+class PessoaisController extends Controller
 {
     public function listar(){
         // $query = Aluno::query();
         // $alunos = $query->get(); // select * from alunos
 
-        $alunos = Aluno::with('turma')->get();
+        $pessoais = Pessoal::with('aluno')->get();
         // SELECT * FROM alunos join turmas on turma_id = turmas.id;
         // @dd($alunos->toArray());
         return view('listar', compact('alunos'));
