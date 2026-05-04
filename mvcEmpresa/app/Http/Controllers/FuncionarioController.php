@@ -1,58 +1,78 @@
 <?php
+namespace App\Http\Controllers;
+use App\Models\Funcionario;
+use App\Models\Departamento;
+
+use Illuminate\Http\Request;
+
 class FuncionarioController extends Controller
 {
-    public function index(){
-        $funcionarios = Funcionario::with(['departamento','dadosPessoais'])->get();
-        return view('funcionarios.index', compact('funcionarios'));
+    public function listar(){
+        $funcionario = Funcionario::with('departamento')->get();
+        return view('listar', compact('funcionarios'));
     }
 
-    public function create(){
-        $departamentos = Departamento::all();
-        return view('funcionarios.create', compact('departamentos'));
+    public function cadastro(){
+        $departamentos = Departamento::get();
+        return view('cadastro', compact('departamentos'));
     }
 
-    public function store(Request $request){
-
-        $funcionario = Funcionario::create($request->only([
-            'nome','sobrenome','cargo','email',
-            'data_admissao','salario','departamento_id'
-        ]));
-
-        DadoPessoal::create([
-            'cpf'=>$request->cpf,
-            'rg'=>$request->rg,
-            'data_nascimento'=>$request->data_nascimento,
-            'cep'=>$request->cep,
-            'funcionario_id'=>$funcionario->id
+    public function add(Request $request){
+        $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|string|max:255|unique:alunos,email',
+            'sobrenome' => 'nullable|exists:turmas,id',
+            'cargo' => 'required|string|max:255',
+            'data_admissao' => 'required|date|max:255',
+            'salario' => 'required|number|max:255',
+        ]);
+        Funcionario::create([
+            'nome' =>$request->nome,
+            'email' => $request->email,
+            'sobrenome' => $request->sobrenome,
+            'cargo' =>$request->cargo,
+            'data_admissao' =>$request->data_admissao,
+            'salario' =>$request->salario
         ]);
 
-        return redirect('/funcionarios');
+        return redirect()->back()->with('success','Funcionario Cadastrado com sucesso!');
+
     }
 
-    public function edit($id){
-        $funcionario = Funcionario::with('dadosPessoais')->findOrFail($id);
-        $departamentos = Departamento::all();
-
-        return view('funcionarios.edit', compact('funcionario','departamentos'));
+    public function atualizar($id){
+        $funcionario = Funcionario::findOrFail($id); 
+        return view('atualizar', compact('funcionario'));
     }
 
     public function update(Request $request, $id){
-        $funcionario = Funcionario::findOrFail($id);
-
-        $funcionario->update($request->all());
-
-        $funcionario->dadosPessoais->update([
-            'cpf'=>$request->cpf,
-            'rg'=>$request->rg,
-            'data_nascimento'=>$request->data_nascimento,
-            'cep'=>$request->cep
+        $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|string|max:255|unique:alunos,email',
+            'sobrenome' => 'nullable|exists:turmas,id',
+            'cargo' => 'required|string|max:255',
+            'data_admissao' => 'required|date|max:255',
+            'salario' => 'required|number|max:255',
         ]);
 
-        return redirect('/funcionarios');
+        $funcionario = Funcionario::findOrFail($id); 
+
+        $funcionario->nome = $request->nome; 
+        $funcionario->email = $request->email; 
+        $funcionario->sobrenome = $request->sobrenome; 
+        $funcionario->cargo = $request->cargo; 
+        $funcionario->data_admissao = $request->data_admissao; 
+        $funcionario->salario = $request->salario; 
+
+        $funcionario->save(); 
+        return redirect()->back()->with('success','Funcionário atualizado com suceso');
     }
 
-    public function destroy($id){
-        Funcionario::destroy($id);
-        return redirect('/funcionarios');
+    public function deletar($id){
+        $funcionario = Funcionario::findOrFail($id); 
+        $funcionario->delete(); 
+
+        return redirect()->route('funcionario.listar')
+            ->with('success','Funcionário excluído com sucesso!');
     }
+
 }
